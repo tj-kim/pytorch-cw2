@@ -286,7 +286,7 @@ class L2Adversary(object):
         # the one-hot encoding of `targets`
         targets_oh = torch.zeros(targets.size() + (num_classes,))  # type: torch.FloatTensor
         targets_oh = runutils.make_cuda_consistent(model, targets_oh)[0]
-        targets_oh.scatter_(1, targets.unsqueeze(1), 1.0)
+        targets_oh.scatter_(1, targets.long().unsqueeze(1), 1.0)
         targets_oh_var = Variable(targets_oh, requires_grad=False)
 
         # the perturbation variable to optimize.
@@ -467,7 +467,7 @@ class L2Adversary(object):
         optimizer.step()
 
         # Make some records in python/numpy on CPU
-        batch_loss = batch_loss_var.data[0]  # type: float
+        batch_loss = batch_loss_var.data  # type: float
         pert_norms_np = _var2numpy(perts_norm_var)
         pert_outputs_np = _var2numpy(pert_outputs_var)
         advxs_np = _var2numpy(advxs_var)
